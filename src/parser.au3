@@ -201,7 +201,6 @@ Func lexer_skip(ByRef $aLexer, $iChars)
 EndFunc
 
 Func lexer_skipToNewline(ByRef $aLexer)
-    Local $aToken
     Local $iChar
     While 1
         $iChar = reader_peek($aLexer[$LEXER_READER])
