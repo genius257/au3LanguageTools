@@ -225,6 +225,18 @@ Func lexer_pos(ByRef $aLexer)
     Return $aPos
 EndFunc
 
+Func lexer_isPeekEqualString(ByRef $aLexer, $sString, $iOffset = 0)
+    Local $aString = StringToASCIIArray($sString)
+    ;ConsoleWrite($sString&' <=> "')
+    For $i = 0 To UBound($aString, 1)-1
+        ;ConsoleWrite(ChrW(reader_peek($aLexer[$LEXER_READER], $i+$iOffset)))
+        ;If Not ($aString[$i] = reader_peek($aLexer[$LEXER_READER], $i+$iOffset)) Then ConsoleWrite('"'&@CRLF)
+        If Not ($aString[$i] = reader_peek($aLexer[$LEXER_READER], $i+$iOffset)) Then Return False
+    Next
+    ;ConsoleWrite('"'&@CRLF)
+    Return True
+EndFunc
+
 Global Enum $LEXERTOKEN_TYPE, $LEXERTOKEN_START, $LEXERTOKEN_END, $LEXERTOKEN_MAX
 
 Func lexerToken($iType, ByRef $start, ByRef $end)
