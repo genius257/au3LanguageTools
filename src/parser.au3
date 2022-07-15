@@ -237,6 +237,17 @@ Func lexer_isPeekEqualString(ByRef $aLexer, $sString, $iOffset = 0)
     Return True
 EndFunc
 
+Func lexer_isPeekEqualStringCaseInsensitive(ByRef $aLexer, $sString, $iOffset = 0)
+    Local $aString1 = StringToASCIIArray(StringLower($sString))
+    Local $aString2 = StringToASCIIArray(StringUpper($sString))
+    Local $iChar
+    For $i = 0 To UBound($aString1, 1)-1
+        $iChar = reader_peek($aLexer[$LEXER_READER], $i+$iOffset)
+        If Not ($aString1[$i] = $iChar Or $aString2[$i] = $iChar) Then Return False
+    Next
+    Return True
+EndFunc
+
 Global Enum $LEXERTOKEN_TYPE, $LEXERTOKEN_START, $LEXERTOKEN_END, $LEXERTOKEN_MAX
 
 Func lexerToken($iType, ByRef $start, ByRef $end)
