@@ -212,6 +212,14 @@ Func lexer_skipToNewline(ByRef $aLexer)
     WEnd
 EndFunc
 
+Func lexer_skipToChar(ByRef $aLexer, $iChar)
+    While 1
+        If reader_peek($aLexer[$LEXER_READER]) = $iChar Then ExitLoop
+        If @error <> 0 Then Return SetError(1, @ScriptLineNumber, -1)
+        reader_skip($aLexer[$LEXER_READER], 1)
+    WEnd
+EndFunc
+
 Func lexer_pos(ByRef $aLexer)
     Local $aPos = [($aLexer[$LEXER_READER])[$READER_INDEX], $aLexer[$LEXER_LINE], $aLexer[$LEXER_COL]]
     Return $aPos
