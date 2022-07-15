@@ -95,7 +95,7 @@ Func lexer_nextToken(ByRef $aLexer)
             ;ConsoleWrite(StringFromASCIIArray(($aLexer[$LEXER_READER])[$READER_DATA], $aPos[0]+1, $aPos[0]+15)&@CRLF)
         Case $LEXER_CHAR_CR
             $iToken = $LEXER_TOKEN_UNKNWON
-            If reader_peek($aLexer[$LEXER_READER]) = 10 Then ContinueCase
+            If reader_peek($aLexer[$LEXER_READER]) = $LEXER_CHAR_LF Then ContinueCase;FIXME: should skip 1 before continue case.
         Case $LEXER_CHAR_LF
             $iToken = $LEXER_TOKEN_NEWLINE
         Case 60 To 62, 38, 43, 45, 63, 58, 42, 47
