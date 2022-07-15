@@ -48,14 +48,23 @@ Func lexer_nextToken(ByRef $aLexer)
     If @error <> 0 Then Return SetError(@error, @extended, $iChar)
     Switch $iChar
         Case 65 To 90, 95, 97 To 122
-            While StringIsAlNum(ChrW(reader_peek($aLexer[$LEXER_READER]))) Or reader_peek($aLexer[$LEXER_READER]) = 95
-                lexer_nextChar($aLexer)
+            Local $iPeek = 0
+            While 1
+                $iChar = reader_peek($aLexer[$LEXER_READER], $iPeek)
+                If Not (StringIsAlNum(ChrW($iChar)) Or $iChar = 95) Then ExitLoop
+                ;If Not (($iChar >= 65 And $iChar <= 90) Or ($iChar >= 97 And $iChar <= 122) Or $iChar = 95) Then ExitLoop
+                $iPeek +=1
             WEnd
+            lexer_skip($aLexer, $iPeek)
             $iToken = $LEXER_TOKEN_IDENTIFIER
         Case 9, 32
-            While reader_peek($aLexer[$LEXER_READER]) = 32 Or reader_peek($aLexer[$LEXER_READER]) = 9
-                lexer_nextChar($aLexer)
+            Local $iPeek = 0
+            While 1
+                $iChar = reader_peek($aLexer[$LEXER_READER], $iPeek)
+                If Not ($iChar = 32 Or $iChar = 9) Then ExitLoop
+                $iPeek+=1
             WEnd
+            lexer_skip($aLexer, $iPeek)
             $iToken = $LEXER_TOKEN_WHITESPACE
         Case 35;#
             $iChar = lexer_skipToNewline($aLexer)
