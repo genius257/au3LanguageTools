@@ -240,7 +240,8 @@ Func lexer_isPeekEqualStringCaseInsensitive(ByRef $aLexer, $sString, $iOffset = 
     Local $aString1 = StringToASCIIArray(StringLower($sString))
     Local $aString2 = StringToASCIIArray(StringUpper($sString))
     Local $iChar
-    For $i = 0 To UBound($aString1, 1)-1
+    Local $iSize = UBound($aString1, 1)-1
+    For $i = 0 To $iSize
         $iChar = reader_peek($aLexer[$LEXER_READER], $i+$iOffset)
         If Not ($aString1[$i] = $iChar Or $aString2[$i] = $iChar) Then Return False
     Next
