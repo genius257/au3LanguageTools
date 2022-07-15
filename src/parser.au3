@@ -67,9 +67,32 @@ Func lexer_nextToken(ByRef $aLexer)
             lexer_skip($aLexer, $iPeek)
             $iToken = $LEXER_TOKEN_WHITESPACE
         Case 35;#
-            $iChar = lexer_skipToNewline($aLexer)
-            If @error <> 0 Then Return SetError(@error, @extended, $iChar)
-            $iToken = $LEXER_TOKEN_PREPROC
+            If lexer_isPeekEqualStringCaseInsensitive($aLexer, "cs") Or lexer_isPeekEqualStringCaseInsensitive($aLexer, "comments-start") Then
+                Local $aToken
+                While 1
+                    lexer_skipToNewline($aLexer)
+                    If @error <> 0 Then Return SetError(1, @ScriptLineNumber, "Unterminated multi-line comment")
+                    lexer_skip($aLexer, lexer_peekToken($aLexer) = $LEXER_CHAR_CR ? 2 : 1)
+                    ;If @error <> 0 Then Return SetError(@error, @extended, $iChar)
+                    $iChar = reader_peek($aLexer[$LEXER_READER])
+                    If $iChar = $LEXER_CHAR_LF Or $iChar = $LEXER_CHAR_CR And reader_peek($aLexer[$LEXER_READER], 1) = $LEXER_CHAR_LF Then ContinueLoop
+                    $aToken = lexer_nextToken($aLexer)
+                    If @error = 0 And $aToken[0] = $LEXER_TOKEN_WHITESPACE Then $aToken = lexer_nextToken($aLexer)
+                    ;If @error = 0 Then ConsoleWrite("iToken: "&$aToken[0]&@CRLF)
+                    ;If reader_peek($aLexer[$LEXER_READER]) = 35 Then; And () Then
+                    If @error = 0 And $aToken[0] = $LEXER_TOKEN_PREPROC And (lexer_isPeekEqualStringCaseInsensitive($aLexer, "ce", ($aToken[1])[0]-($aToken[2])[0]+1) Or lexer_isPeekEqualStringCaseInsensitive($aLexer, "comments-end", ($aToken[1])[0]-($aToken[2])[0]+1)) Then
+                        ;ConsoleWrite(StringFromASCIIArray(($aLexer[$LEXER_READER])[$READER_DATA], ($aToken[1])[0]+1, ($aToken[1])[0]+3)&@CRLF)
+                        ;Exit
+                        $iToken = $LEXER_TOKEN_MULTI_LINE_COMMENT
+                        ExitLoop
+                    EndIf
+                WEnd
+            Else
+                $iChar = lexer_skipToNewline($aLexer)
+                If @error <> 0 Then Return SetError(@error, @extended, $iChar)
+                $iToken = $LEXER_TOKEN_PREPROC
+            EndIf
+            ;ConsoleWrite(StringFromASCIIArray(($aLexer[$LEXER_READER])[$READER_DATA], $aPos[0]+1, $aPos[0]+15)&@CRLF)
         Case $LEXER_CHAR_CR
             $iToken = $LEXER_TOKEN_UNKNWON
             If reader_peek($aLexer[$LEXER_READER]) = 10 Then ContinueCase
