@@ -74,6 +74,8 @@ Func lexer_nextToken(ByRef $aLexer)
                     lexer_skipToNewline($aLexer)
                     If @error <> 0 Then Return SetError(1, @ScriptLineNumber, "Unterminated multi-line comment")
                     lexer_skip($aLexer, reader_peek($aLexer[$LEXER_READER]) = $LEXER_CHAR_CR ? 2 : 1)
+                    $aLexer[$LEXER_LINE]+=1
+                    $aLexer[$LEXER_COL]=0
                     ;If @error <> 0 Then Return SetError(@error, @extended, $iChar)
                     $iChar = reader_peek($aLexer[$LEXER_READER])
                     If $iChar = $LEXER_CHAR_LF Or $iChar = $LEXER_CHAR_CR And reader_peek($aLexer[$LEXER_READER], 1) = $LEXER_CHAR_LF Then ContinueLoop
