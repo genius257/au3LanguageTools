@@ -271,7 +271,7 @@ Func parser_parse($sInput)
         Switch $aToken[0]
             Case $LEXER_TOKEN_IDENTIFIER
                 ;ConsoleWrite(lexerToken_toString($sInput, $aToken)&@CRLF)
-                Switch StringLower(StringMid($sInput, ($aToken[1])[0], ($aToken[2])[0]))
+                Switch StringLower(lexerToken_toString($sInput, $aToken))
                     Case 'func'
                         $SourceElement = parser_parseFunctionDeclaration($sInput, $aLexer, $aToken)
                     Case 'local', 'global', 'dim', 'redim'
