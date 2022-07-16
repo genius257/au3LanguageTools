@@ -260,7 +260,8 @@ Func lexerToken_toString($sInput, ByRef $aToken)
 EndFunc
 
 Func parser_parse($sInput)
-    $aLexer = lexer($sInput)
+    Local $aLexer = lexer($sInput)
+    Local $SourceElement
     While 1
         $aToken = lexer_nextToken($aLexer)
         If @error <> 0 Then ExitLoop
@@ -269,14 +270,20 @@ Func parser_parse($sInput)
                 ;ConsoleWrite(lexerToken_toString($sInput, $aToken)&@CRLF)
                 Switch StringLower(StringMid($sInput, ($aToken[1])[0], ($aToken[2])[0]))
                     Case 'func'
-                    Case 'local', 'global'
+                        $SourceElement = parser_parseFunctionDeclaration($sInput, $aLexer, $aToken)
+                    Case 'local', 'global', 'dim', 'redim'
+                        $SourceElement = parser_parseVariableStatement($sInput, $aLexer, $aToken)
                     Case Else
+                        $SourceElement = parser_parseAssignmentExpression($sInput, $aLexer, $aToken)
+                        ;If parser_isReservedIdentifier(StringLower(StringMid($sInput, ($aToken[1])[0], ($aToken[2])[0]))) Then $aToken = parser_expectEOS($aLexer)
+                        ;If @error <> 0 Then Return SetError(@error, @ScriptLineNumber, StringFormat('Expected EOS but found "%s"', StringLower(StringMid($sInput, ($aToken[1])[0], ($aToken[2])[0]))))
                 EndSwitch
-            Case $LEXER_TOKEN_NEWLINE, $LEXER_TOKEN_SINGLE_LINE_COMMENT, $LEXER_TOKEN_WHITESPACE
+            Case $LEXER_TOKEN_NEWLINE, $LEXER_TOKEN_SINGLE_LINE_COMMENT, $LEXER_TOKEN_WHITESPACE, $LEXER_TOKEN_MULTI_LINE_COMMENT
                 ContinueLoop
             Case $LEXER_TOKEN_VARIABLE
-                $aToken = lexer_nextToken($aLexer)
-                    If $aToken[0] = $LEXER_TOKEN_WHITESPACE Then $aToken = lexer_nextToken($aLexer)
+                $SourceElement = parser_parseVariableStatement($sInput, $aLexer, $aToken)
+                ;$aToken = lexer_nextToken($aLexer)
+                    ;If $aToken[0] = $LEXER_TOKEN_WHITESPACE Then $aToken = lexer_nextToken($aLexer)
             Case $LEXER_TOKEN_PREPROC
                 Switch StringLower(lexerToken_toString($sInput, $aToken))
                     Case "#include"
