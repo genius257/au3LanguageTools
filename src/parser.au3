@@ -188,7 +188,7 @@ Func lexer_peekToken(ByRef $aLexer)
     $aLexer[$LEXER_POS] = $lpos
     $aLexer[$LEXER_LINE] = $lline
     $aLexer[$LEXER_COL] = $lcol
-    ($aLexer[$LEXER_READER])[$READER_INDEX] = $rpos
+    reader_setIndex($aLexer[$LEXER_READER], $rpos)
 EndFunc
 
 Func lexer_nextChar(ByRef $aLexer)
