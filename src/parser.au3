@@ -27,6 +27,10 @@ Func reader_skip(ByRef $aReader, $iChars)
     $aReader[$READER_INDEX] += $iChars
 EndFunc
 
+Func reader_setIndex(ByRef $aReader, $iIndex)
+    $aReader[$READER_INDEX] = $iIndex
+EndFunc
+
 Global Enum $LEXER_READER, $LEXER_POS, $LEXER_LINE, $LEXER_COL, $LEXER_MAX
 
 Func lexer($sInput)
